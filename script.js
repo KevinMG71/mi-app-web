@@ -74,6 +74,39 @@ if (lista) {
     lista.appendChild(li);
   });
 }
+function crearTarea(texto, completada) {
+  const lista = document.getElementById("lista");
+  if (!lista) return;
+
+  const li = document.createElement("li");
+
+  // TEXTO
+  const span = document.createElement("span");
+  span.textContent = texto;
+
+  if (completada) li.classList.add("completada");
+
+  span.onclick = () => {
+    li.classList.toggle("completada");
+    actualizarEstado(texto);
+  };
+
+  // BOTÓN BORRAR
+  const btn = document.createElement("button");
+  btn.textContent = "🗑️";
+  btn.className = "borrar";
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    li.remove();
+    eliminarTarea(texto);
+  };
+
+  li.appendChild(span);
+  li.appendChild(btn);
+  lista.appendChild(li);
+}
+
 
 
 
