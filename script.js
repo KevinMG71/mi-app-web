@@ -1,3 +1,5 @@
+alert("SCRIPT CARGADO");
+
 // =====================
 // LOGIN
 // =====================
@@ -72,6 +74,7 @@ if (lista) {
     lista.appendChild(li);
   });
 }
+
 
 
 
