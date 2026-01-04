@@ -34,48 +34,44 @@ button {
   background: #ff4d4d;
 }
 
+/* =====================
+   TAREAS
+===================== */
+
 li {
   list-style: none;
   background: #f1f1f1;
   padding: 8px;
   margin-top: 8px;
   border-radius: 6px;
-}
-li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 li span {
+  flex: 1;
   cursor: pointer;
 }
 
-li button {
-  background: red;
+button.borrar {
+  background: #ff4d4d;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
+  padding: 5px 8px;
   cursor: pointer;
+  font-size: 14px;
 }
+
+button.borrar:hover {
+  background: #cc0000;
+}
+
 .completada {
   text-decoration: line-through;
   color: gray;
 }
-li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-button.borrar {
-  background: red;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  padding: 4px 6px;
-}
-
 
 
