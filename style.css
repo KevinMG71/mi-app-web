@@ -58,3 +58,9 @@ li button {
   border-radius: 5px;
   cursor: pointer;
 }
+.completada {
+  text-decoration: line-through;
+  color: gray;
+}
+
+
