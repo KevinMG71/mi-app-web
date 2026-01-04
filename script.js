@@ -1,4 +1,4 @@
-alert("SCRIPT CARGADO");
+alert("SCRIPT NUEVO CARGADO");
 
 // =====================
 // LOGIN
@@ -11,8 +11,8 @@ function login() {
     localStorage.setItem("login", "true");
     window.location.href = "app.html";
   } else {
-    const msg = document.getElementById("mensaje");
-    if (msg) msg.innerText = "❌ Usuario o contraseña incorrectos";
+    document.getElementById("mensaje").innerText =
+      "❌ Usuario o contraseña incorrectos";
   }
 }
 
@@ -20,67 +20,43 @@ function login() {
 // LOGOUT
 // =====================
 function logout() {
-  localStorage.removeItem("login");
+  localStorage.clear();
   window.location.href = "index.html";
 }
 
 // =====================
 // PROTECCIÓN
 // =====================
-if (window.location.pathname.includes("app.html")) {
+if (location.pathname.includes("app.html")) {
   if (localStorage.getItem("login") !== "true") {
-    window.location.href = "index.html";
+    location.href = "index.html";
   }
 }
 
 // =====================
-// TAREAS
+// AGREGAR TAREA
 // =====================
 function agregarTarea() {
   const input = document.getElementById("tarea");
-  const lista = document.getElementById("lista");
-
-  if (!input || !lista) return;
-
   const texto = input.value.trim();
-  if (texto === "") return;
+  if (!texto) return;
 
   const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
   tareas.push({ texto, completada: false });
   localStorage.setItem("tareas", JSON.stringify(tareas));
 
-  const li = document.createElement("li");
-  li.textContent = texto;
-
-  li.onclick = () => {
-    li.classList.toggle("completada");
-  };
-
-  lista.appendChild(li);
+  crearTarea(texto, false);
   input.value = "";
 }
 
 // =====================
-// CARGAR TAREAS
+// CREAR TAREA
 // =====================
-const lista = document.getElementById("lista");
-if (lista) {
-  const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
-  tareas.forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = t.texto;
-    if (t.completada) li.classList.add("completada");
-    li.onclick = () => li.classList.toggle("completada");
-    lista.appendChild(li);
-  });
-}
 function crearTarea(texto, completada) {
   const lista = document.getElementById("lista");
-  if (!lista) return;
 
   const li = document.createElement("li");
 
-  // TEXTO
   const span = document.createElement("span");
   span.textContent = texto;
 
@@ -88,18 +64,15 @@ function crearTarea(texto, completada) {
 
   span.onclick = () => {
     li.classList.toggle("completada");
-    actualizarEstado(texto);
   };
 
-  // BOTÓN BORRAR
   const btn = document.createElement("button");
   btn.textContent = "🗑️";
   btn.className = "borrar";
 
-  btn.onclick = (e) => {
-    e.stopPropagation();
+  btn.onclick = () => {
     li.remove();
-    eliminarTarea(texto);
+    borrarDeStorage(texto);
   };
 
   li.appendChild(span);
@@ -107,7 +80,23 @@ function crearTarea(texto, completada) {
   lista.appendChild(li);
 }
 
+// =====================
+// BORRAR
+// =====================
+function borrarDeStorage(texto) {
+  let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+  tareas = tareas.filter(t => t.texto !== texto);
+  localStorage.setItem("tareas", JSON.stringify(tareas));
+}
 
+// =====================
+// CARGAR
+// =====================
+const lista = document.getElementById("lista");
+if (lista) {
+  const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+  tareas.forEach(t => crearTarea(t.texto, t.completada));
+}
 
 
 
