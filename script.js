@@ -1,76 +1,87 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  // =====================
   // LOGIN
+  // =====================
   window.login = function () {
-    const user = document.getElementById("usuario").value.trim();
-    const pass = document.getElementById("password").value.trim();
+    const user = document.getElementById("usuario")?.value.trim();
+    const pass = document.getElementById("password")?.value.trim();
 
     if (user === "admin" && pass === "1234") {
       localStorage.setItem("login", "true");
       window.location.href = "app.html";
     } else {
-      document.getElementById("mensaje").innerText =
-        "❌ Usuario o contraseña incorrectos";
+      const msg = document.getElementById("mensaje");
+      if (msg) msg.innerText = "❌ Usuario o contraseña incorrectos";
     }
   };
 
-  // PROTECCIÓN DE app.html
+  // =====================
+  // LOGOUT
+  // =====================
+  window.logout = function () {
+    localStorage.removeItem("login");
+    window.location.href = "index.html";
+  };
+
+  // =====================
+  // PROTECCIÓN app.html
+  // =====================
   if (window.location.pathname.includes("app.html")) {
     if (localStorage.getItem("login") !== "true") {
       window.location.href = "index.html";
+      return;
     }
   }
 
+  // =====================
   // TAREAS
+  // =====================
   const lista = document.getElementById("lista");
 
-function cargarTareas() {
-  const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
-  tareas.forEach(t => crearTarea(t.texto, t.completada));
-}
+  window.agregarTarea = function () {
+    const input = document.getElementById("tarea");
+    if (!input) return;
 
-function agregarTarea() {
-  const input = document.getElementById("tarea");
-  const texto = input.value.trim();
-  if (texto === "") return;
+    const texto = input.value.trim();
+    if (texto === "") return;
 
-  crearTarea(texto, false);
+    const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+    tareas.push({ texto, completada: false });
+    localStorage.setItem("tareas", JSON.stringify(tareas));
 
-  const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
-  tareas.push({ texto: texto, completada: false });
-  localStorage.setItem("tareas", JSON.stringify(tareas));
+    crearTarea(texto, false);
+    input.value = "";
+  };
 
-  input.value = "";
-}
+  function crearTarea(texto, completada) {
+    const li = document.createElement("li");
+    li.textContent = texto;
 
-function crearTarea(texto, completada) {
-  const li = document.createElement("li");
-  li.textContent = texto;
-  li.classList.add("tarea");
+    if (completada) li.classList.add("completada");
 
-  if (completada) {
-    li.classList.add("completada");
+    li.addEventListener("click", () => {
+      li.classList.toggle("completada");
+      actualizarEstado(texto);
+    });
+
+    lista.appendChild(li);
   }
 
-  li.addEventListener("click", () => {
-    li.classList.toggle("completada");
-    actualizarEstadoTarea(texto);
-  });
+  function actualizarEstado(texto) {
+    let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+    tareas = tareas.map(t =>
+      t.texto === texto ? { ...t, completada: !t.completada } : t
+    );
+    localStorage.setItem("tareas", JSON.stringify(tareas));
+  }
 
-  lista.appendChild(li);
-}
+  function cargarTareas() {
+    const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+    tareas.forEach(t => crearTarea(t.texto, t.completada));
+  }
 
-function actualizarEstadoTarea(texto) {
-  let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
-  tareas = tareas.map(t =>
-    t.texto === texto
-      ? { texto: t.texto, completada: !t.completada }
-      : t
-  );
-  localStorage.setItem("tareas", JSON.stringify(tareas));
-}
+  if (lista) cargarTareas();
 
-if (lista) {
-  cargarTareas();
-}
 });
+
